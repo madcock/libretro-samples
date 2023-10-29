@@ -1,5 +1,9 @@
 static int numgroups=4;
+#if !defined(SF2000)
 static int groupsizes[]={5,2,1,1};
+#else
+static int groupsizes[]={6,2,1,1};
+#endif
 
 #define init_grp 1
 #define init_sub 'a'
@@ -136,7 +140,11 @@ static void test1b(void)
 
    for (x=0;x<320;x++)
    {
+#if !defined(SF2000)
       if ((x+state.frame)%40 > 20)
+#else
+      if ((x+state.frame*2)%40 > 20)
+#endif
          pixels[x] = p_blk;
       else
          pixels[x] = p_wht;
@@ -153,7 +161,11 @@ static void test1c(void)
    {
       for (x=0;x<320;x++)
       {
+#if !defined(SF2000)
          if (((240-y)+state.frame)%30 > 15)
+#else
+         if (((240-y)+state.frame*2)%30 > 15)
+#endif
             pixels[y*320+x]=p_blk|p_x;
          else
             pixels[y*320+x]=p_wht|p_x;
@@ -383,8 +395,13 @@ void retro_init(void)
    else
       log_cb = log_null;
 
+#if !defined(SF2000)
    log_cb(RETRO_LOG_DEBUG, "0123 test");
    log_cb(RETRO_LOG_DEBUG, "%.3i%c t%st", 12, '3', "es");
+#else
+   log_cb(RETRO_LOG_DEBUG, "0123 test\n");
+   log_cb(RETRO_LOG_DEBUG, "%.3i%c t%st\n", 12, '3', "es");
+#endif
 }
 
 void retro_deinit(void) {}
@@ -400,7 +417,11 @@ void retro_get_system_av_info(struct retro_system_av_info* info)
 {
    static const struct retro_system_av_info myinfo = {
       { 320, 240, 320, 240, 0.0 },
+#if !defined(SF2000)
       { 60.0, 30720.0 }
+#else
+      { 60.0, 22050.0 }
+#endif
    };
    memcpy(info, &myinfo, sizeof(myinfo));
 }
@@ -426,8 +447,13 @@ void retro_run(void)
 
    for (i=0;i<16;i++)
    {
+#if !defined(SF2000)
       inpstate[0] |= (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, i))<<i;
       inpstate[1] |= (input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, i))<<i;
+#else
+      inpstate[0] |= input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, i) ? (1 << i) : 0;
+      inpstate[1] |= input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, i) ? (1 << i) : 0;
+#endif
    }
    sound_enable = false;
 
