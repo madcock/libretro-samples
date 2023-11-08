@@ -420,7 +420,7 @@ void retro_get_system_av_info(struct retro_system_av_info* info)
 #if !defined(SF2000)
       { 60.0, 30720.0 }
 #else
-      { 60.0, 22050.0 }
+      { 60.0, 24000.0 }
 #endif
    };
    memcpy(info, &myinfo, sizeof(myinfo));
@@ -544,6 +544,7 @@ void retro_run(void)
    if (sound_enable)
    {
       int16_t data[8*64*2];
+#if !defined(SF2000)
       for (i=0;i<8*64;i++)
       {
          data[i*2] = sin(((double)(state.frame*8*64 + i))/30720*2*PI * 440)*4096;
@@ -553,12 +554,27 @@ void retro_run(void)
       {
          audio_batch_cb(data+(i*128), 64);
       }
+#else
+      for (i=0;i<8*50;i++)
+      {
+         data[i*2] = sin(((double)(state.frame*8*50 + i))/24000*2*PI * 440)*4096;
+         data[i*2+1] = data[i*2];
+      }
+      for (i=0;i<8;i++)
+      {
+         audio_batch_cb(data+(i*100), 50);
+      }
+#endif
    }
    else
    {
       int16_t data[64*2];
       memset(data, 0, sizeof(data));
+#if !defined(SF2000)
       for (i=0;i<8;i++) audio_batch_cb(data, 64);
+#else
+      for (i=0;i<8;i++) audio_batch_cb(data, 50);
+#endif
    }
 
    video_cb(pixels, 320, 240, sizeof(pixel_t)*320);
