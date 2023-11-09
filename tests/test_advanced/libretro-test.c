@@ -13,9 +13,9 @@ static int groupsizes[]={6,2,1,1};
 //RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME 18
 
 //do not use the names as primary - they're an enum, the preprocessor can't read them
-#define PIXFMT 0//RETRO_PIXEL_FORMAT_0RGB1555
+//#define PIXFMT 0//RETRO_PIXEL_FORMAT_0RGB1555
 //#define PIXFMT 1//RETRO_PIXEL_FORMAT_XRGB8888
-//#define PIXFMT 2//RETRO_PIXEL_FORMAT_RGB565
+#define PIXFMT 2//RETRO_PIXEL_FORMAT_RGB565
 
 #if PIXFMT==0
 #define pixel_t uint16_t
